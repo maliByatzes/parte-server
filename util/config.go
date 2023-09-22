@@ -8,6 +8,7 @@ type Config struct {
 	DBSource    string `mapstructure:"DB_SOURCE"`
 	DBUrl       string `mapstructure:"DB_URL"`
 	HttpAddress string `mapstructure:"HTTP_ADDRESS"`
+	TokenKey    string `mapstructure:"TOKEN_KEY"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
