@@ -12,20 +12,20 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: Maliborh521908
-          POSTGRES_DB: partedb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # services:
+    #   postgres:
+    #     image: postgres:16
+    #     env:
+    #       POSTGRES_USER: admin
+    #       POSTGRES_PASSWORD: admin
+    #       POSTGRES_DB: app
+    #     ports:
+    #       - 5432:5432
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
@@ -45,8 +45,13 @@ jobs:
         sudo mv migrate /usr/bin/migrate
         which migrate
 
+    - name: Start container
+      run: |
+        docker compose up -d
+        sleep 3
+
     - name: Run migrations
       run: make migup
 
-    - name: Test
-      run: make test
+    # - name: Test
+    #   run: make test

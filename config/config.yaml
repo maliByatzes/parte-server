@@ -1,0 +1,21 @@
+database:
+  hostname: "localhost"
+  port: 5432
+  source: "postgres"
+  user: "admin"
+  password: "admin"
+  database: "app"
+
+http:
+  hostname: "localhost"
+  port: 8080
+  readTimeout: "5s"
+  writeTimeout: "10s"
+  idleTimeout: "2m"
+  tls:
+    enabled: false
+    certificate: ""
+    key: ""
+
+token:
+  tokenkey: 0499a329d2c8c28f8724699daa380907
