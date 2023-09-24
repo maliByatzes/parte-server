@@ -1,33 +1,36 @@
-# migrateschema:
-# 	migrate create -ext sql -dir db/migration -seq init_<name>
+.PHONY: up
+up:
+	docker compose up -d
+	sleep 3
 
-# Create a docker container for postgres
-postgres:
-	docker run --name postgres1 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=Maliborh521908 -d postgres:16-alpine
+.PHONY: reset
+reset:
+	docker compose down
+	make up
 
-# Create a database in the docker container
-createdb:
-	docker exec -it postgres1 createdb --username=root --owner=root partedb 
+.PHONY: db
+db:
+	docker exec -it parte_db psql postgresql://admin:admin@localhost:5432/app
 
-# Delete a database from the docker container
-dropdb:
-	docker exec -it postgres1 dropdb partedb
-
-# Migrate up
+.PHONY: migup
 migup:
-	migrate -path db/migration -database "postgresql://root:Maliborh521908@localhost:5432/partedb?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://admin:admin@localhost:5432/app?sslmode=disable" -verbose up
 
-# Migrate down
+.PHONY: migdown
 migdown:
-	migrate -path db/migration -database "postgresql://root:Maliborh521908@localhost:5432/partedb?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://admin:admin@localhost:5432/app?sslmode=disable" -verbose down
 
+.PHONY: sqlc
 sqlc:
 	sqlc generate
 
+.PHONY: test
 test:
-	go test -v -cover ./...
+	make migdown
+	make migup
+	go test -count=1 -p 1 ./... -v
 
+.PHONY: server
 server:
 	go run main.go
 
-.PHONY: postgres createdb dropdb migup migdown

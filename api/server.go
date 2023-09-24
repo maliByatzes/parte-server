@@ -4,20 +4,20 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/maliByatzes/parte-server/config"
 	db "github.com/maliByatzes/parte-server/db/sqlc"
 	"github.com/maliByatzes/parte-server/token"
-	"github.com/maliByatzes/parte-server/util"
 )
 
 type Server struct {
-	config     util.Config
+	config     config.Config
 	store      db.Store
 	router     *gin.Engine
 	tokenMaker token.Maker
 }
 
-func NewServer(config util.Config, store db.Store) (*Server, error) {
-	tokenMaker, err := token.NewPasetoMaker(config.TokenKey)
+func NewServer(config config.Config, store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewPasetoMaker(config.Token.TokenKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create a token maker: %v", err)
 	}

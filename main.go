@@ -2,21 +2,28 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/maliByatzes/parte-server/api"
+	"github.com/maliByatzes/parte-server/config"
 	db "github.com/maliByatzes/parte-server/db/sqlc"
-	"github.com/maliByatzes/parte-server/util"
 )
 
 func main() {
-	config, err := util.LoadConfig(".")
+	config, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("cannot load in config:", err)
 	}
 
-	connPool, err := pgxpool.New(context.Background(), config.DBUrl)
+	connPool, err := pgxpool.New(context.Background(), fmt.Sprintf("postgresql://%s:%s@%s:%d/%s",
+		config.Database.User,
+		config.Database.Password,
+		config.Database.HostName,
+		config.Database.Port,
+		config.Database.Database,
+	))
 	if err != nil {
 		log.Fatal("cannot create db pool:", err)
 	}
@@ -26,13 +33,13 @@ func main() {
 	runGinServer(config, store)
 }
 
-func runGinServer(config util.Config, store db.Store) {
+func runGinServer(config config.Config, store db.Store) {
 	server, err := api.NewServer(config, store)
 	if err != nil {
 		log.Fatal("cannot create server")
 	}
 
-	err = server.Start(config.HttpAddress)
+	err = server.Start(fmt.Sprintf("%s:%d", config.HTTP.HostName, config.HTTP.Port))
 	if err != nil {
 		log.Fatal("cannot start server")
 	}
