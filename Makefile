@@ -12,6 +12,10 @@ reset:
 db:
 	docker exec -it parte_db psql postgresql://admin:admin@localhost:5432/app
 
+.PHONY: cache
+cache:
+	docker exec -it parte_cache redis-cli
+
 .PHONY: migup
 migup:
 	migrate -path db/migration -database "postgresql://admin:admin@localhost:5432/app?sslmode=disable" -verbose up
