@@ -47,10 +47,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	// TODO:
-	// generate a 6-digit token
-	// store token in redis
-	// send email to user via a different goroutine
+	// send email to user
 
 	// Send user response
 	ctx.JSON(http.StatusOK, user)
