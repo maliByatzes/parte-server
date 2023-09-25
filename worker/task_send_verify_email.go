@@ -14,7 +14,7 @@ import (
 const TaskSendVerifyEmail = "task:send_verify_email"
 
 type PayloadSendVerifyEmail struct {
-	Username uuid.UUID `json:"username"`
+	Id uuid.UUID `json:"id"`
 }
 
 func (distributor *RedisTaskDistributor) DistributeTaskSendVerifyEmail(
@@ -45,7 +45,7 @@ func (processor *RedisTaskProcessor) ProcessorTaskSendVerifyEmail(ctx context.Co
 		return fmt.Errorf("failed to unmarshal payload: %w", asynq.SkipRetry)
 	}
 
-	user, err := processor.store.GetUser(ctx, payload.Username)
+	user, err := processor.store.GetUser(ctx, payload.Id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fmt.Errorf("user doesn't exist: %w", asynq.SkipRetry)

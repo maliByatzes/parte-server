@@ -2,10 +2,13 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hibiken/asynq"
 	db "github.com/maliByatzes/parte-server/db/sqlc"
 	"github.com/maliByatzes/parte-server/util"
+	"github.com/maliByatzes/parte-server/worker"
 )
 
 // set up user request json
@@ -47,7 +50,19 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	// send email to user
+	// TODO: use db transactions
+	taskPayload := &worker.PayloadSendVerifyEmail{
+		Id: user.ID,
+	}
+	opts := []asynq.Option{
+		asynq.MaxRetry(10),
+		asynq.ProcessIn(10 * time.Second),
+		asynq.Queue(worker.QueueCritical),
+	}
+	err = server.taskDistributor.DistributeTaskSendVerifyEmail(ctx, taskPayload, opts...)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	}
 
 	// Send user response
 	ctx.JSON(http.StatusOK, user)

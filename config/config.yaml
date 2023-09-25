@@ -17,5 +17,10 @@ http:
     certificate: ""
     key: ""
 
+cache:
+  hostname: "localhost"
+  port: 6379
+  password: ""
+
 token:
   tokenkey: 0499a329d2c8c28f8724699daa380907

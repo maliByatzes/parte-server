@@ -12,6 +12,7 @@ type (
 	Config struct {
 		Database DatabaseConfig
 		HTTP     HTTPConfig
+		Cache    CacheConfig
 		Token    TokenConfig
 	}
 
@@ -35,6 +36,12 @@ type (
 			Certificate string
 			Key         string
 		}
+	}
+
+	CacheConfig struct {
+		HostName string
+		Port     uint16
+		Password string
 	}
 
 	TokenConfig struct {
