@@ -7,6 +7,7 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/hibiken/asynq v0.24.1
 	github.com/jackc/pgx/v5 v5.4.3
+	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/rs/zerolog v1.30.0
 	golang.org/x/crypto v0.9.0
 )

@@ -28,7 +28,7 @@ func createRandomUser(t *testing.T) User {
 	require.Equal(t, arg.HashedPassword, user.HashedPassword)
 	require.Equal(t, arg.Email, user.Email)
 	require.NotZero(t, user.ID)
-	require.Equal(t, false, user.IsActive)
+	require.Equal(t, false, user.IsVerified)
 	require.Equal(t, false, user.IsSuperuser)
 	require.NotEmpty(t, user.Thumbnail)
 	require.NotZero(t, user.UpdatedAt)
@@ -53,7 +53,7 @@ func TestGetuser(t *testing.T) {
 	require.Equal(t, user1.Username, user2.Username)
 	require.Equal(t, user1.HashedPassword, user2.HashedPassword)
 	require.Equal(t, user1.Email, user2.Email)
-	require.Equal(t, user1.IsActive, user2.IsActive)
+	require.Equal(t, user1.IsVerified, user2.IsVerified)
 	require.Equal(t, user1.IsSuperuser, user2.IsSuperuser)
 	require.Equal(t, user1.Thumbnail, user2.Thumbnail)
 	require.WithinDuration(t, user1.UpdatedAt, user2.UpdatedAt, time.Second)
@@ -72,7 +72,7 @@ func TestUpdateUser(t *testing.T) {
 		Username:       util.RandomUsername(),
 		HashedPassword: hashedPassword,
 		Email:          util.RandomEmail(),
-		IsActive:       user1.IsActive,
+		IsVerified:     user1.IsVerified,
 		IsSuperuser:    user1.IsSuperuser,
 		Thumbnail:      user1.Thumbnail,
 	}
@@ -85,7 +85,7 @@ func TestUpdateUser(t *testing.T) {
 	require.Equal(t, arg.Username, user2.Username)
 	require.Equal(t, arg.HashedPassword, user2.HashedPassword)
 	require.Equal(t, arg.Email, user2.Email)
-	require.Equal(t, user1.IsActive, user2.IsActive)
+	require.Equal(t, user1.IsVerified, user2.IsVerified)
 	require.Equal(t, user1.IsSuperuser, user2.IsSuperuser)
 	require.Equal(t, user1.Thumbnail, user2.Thumbnail)
 	require.WithinDuration(t, user1.UpdatedAt, user2.UpdatedAt, time.Second)

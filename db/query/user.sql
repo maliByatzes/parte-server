@@ -17,7 +17,7 @@ SET
   username = $2,
   hashed_password = $3,
   email = $4,
-  is_active = $5,
+  is_verified = $5,
   is_superuser = $6,
   thumbnail = $7
 WHERE id = $1

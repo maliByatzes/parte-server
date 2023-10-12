@@ -8,6 +8,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
+	db "github.com/maliByatzes/parte-server/db/sqlc"
+	"github.com/maliByatzes/parte-server/util"
 	"github.com/rs/zerolog/log"
 )
 
@@ -53,7 +55,28 @@ func (processor *RedisTaskProcessor) ProcessorTaskSendVerifyEmail(ctx context.Co
 		return fmt.Errorf("failed to get user: %w", asynq.SkipRetry)
 	}
 
-	// TODO: send email to user
+	verifyEmail, err := processor.store.CreateVerifyEmail(ctx, db.CreateVerifyEmailParams{
+		UserID:     user.ID,
+		Email:      user.Email,
+		SecretCode: util.RandomString(32),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create verify email: %w", err)
+	}
+
+	subject := "Welcome to Parte"
+	verifyUrl := fmt.Sprintf("http://parte.com/verify_email?id=%d&secret_code=%s", verifyEmail.ID, verifyEmail.SecretCode)
+	content := fmt.Sprintf(`Hello %s, <br/>
+	Thank you for registering with us!<br/>
+	Please <a href="%s">click her</a> to verify your email address.<br/>
+	`, user.Username, verifyUrl)
+	to := []string{user.Email}
+
+	err = processor.mailer.SendEmail(subject, content, to, nil, nil, nil)
+	if err != nil {
+		return fmt.Errorf("failed to send verify email: %w", err)
+	}
+
 	log.Info().Str("type", task.Type()).Bytes("payload", task.Payload()).
 		Str("email", user.Email).Msg("processed task")
 

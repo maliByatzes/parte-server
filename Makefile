@@ -30,8 +30,6 @@ sqlc:
 
 .PHONY: test
 test:
-	make migdown
-	make migup
 	go test -count=1 -p 1 ./... -v
 
 .PHONY: server

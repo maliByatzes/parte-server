@@ -24,3 +24,8 @@ cache:
 
 token:
   tokenkey: 0499a329d2c8c28f8724699daa380907
+
+mail:
+  sender: "Parte"
+  password: "sxapyzdazbjfibov"
+  senderAddress: "malibongwe2027zakes@gmail.com"

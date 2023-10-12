@@ -9,6 +9,7 @@ import (
 	"github.com/maliByatzes/parte-server/api"
 	"github.com/maliByatzes/parte-server/config"
 	db "github.com/maliByatzes/parte-server/db/sqlc"
+	"github.com/maliByatzes/parte-server/mail"
 	"github.com/maliByatzes/parte-server/worker"
 	"github.com/rs/zerolog/log"
 )
@@ -40,7 +41,7 @@ func main() {
 
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
 
-	go runTaskProcessor(redisOpt, store)
+	go runTaskProcessor(config, redisOpt, store)
 	runGinServer(config, store, taskDistributor)
 }
 
@@ -56,8 +57,9 @@ func runGinServer(config config.Config, store db.Store, taskDIstributor worker.T
 	}
 }
 
-func runTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) {
-	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store)
+func runTaskProcessor(config config.Config, redisOpt asynq.RedisClientOpt, store db.Store) {
+	mailer := mail.NewGmailSender(config.Mail.Sender, config.Mail.SenderAddress, config.Mail.Password)
+	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store, mailer)
 	log.Info().Msg("start processor task")
 	err := taskProcessor.Start()
 	if err != nil {

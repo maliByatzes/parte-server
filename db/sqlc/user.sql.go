@@ -18,7 +18,7 @@ INSERT INTO users (
   email
 ) VALUES (
   $1, $2, $3
-) RETURNING id, username, hashed_password, email, is_active, is_superuser, thumbnail, updated_at, created_at
+) RETURNING id, username, hashed_password, email, is_verified, is_superuser, thumbnail, updated_at, created_at
 `
 
 type CreateUserParams struct {
@@ -35,7 +35,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Username,
 		&i.HashedPassword,
 		&i.Email,
-		&i.IsActive,
+		&i.IsVerified,
 		&i.IsSuperuser,
 		&i.Thumbnail,
 		&i.UpdatedAt,
@@ -45,7 +45,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, username, hashed_password, email, is_active, is_superuser, thumbnail, updated_at, created_at FROM users
+SELECT id, username, hashed_password, email, is_verified, is_superuser, thumbnail, updated_at, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -57,7 +57,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.Username,
 		&i.HashedPassword,
 		&i.Email,
-		&i.IsActive,
+		&i.IsVerified,
 		&i.IsSuperuser,
 		&i.Thumbnail,
 		&i.UpdatedAt,
@@ -72,11 +72,11 @@ SET
   username = $2,
   hashed_password = $3,
   email = $4,
-  is_active = $5,
+  is_verified = $5,
   is_superuser = $6,
   thumbnail = $7
 WHERE id = $1
-RETURNING id, username, hashed_password, email, is_active, is_superuser, thumbnail, updated_at, created_at
+RETURNING id, username, hashed_password, email, is_verified, is_superuser, thumbnail, updated_at, created_at
 `
 
 type UpdateUserParams struct {
@@ -84,7 +84,7 @@ type UpdateUserParams struct {
 	Username       string    `json:"username"`
 	HashedPassword string    `json:"hashed_password"`
 	Email          string    `json:"email"`
-	IsActive       bool      `json:"is_active"`
+	IsVerified     bool      `json:"is_verified"`
 	IsSuperuser    bool      `json:"is_superuser"`
 	Thumbnail      string    `json:"thumbnail"`
 }
@@ -95,7 +95,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.Username,
 		arg.HashedPassword,
 		arg.Email,
-		arg.IsActive,
+		arg.IsVerified,
 		arg.IsSuperuser,
 		arg.Thumbnail,
 	)
@@ -105,7 +105,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.Username,
 		&i.HashedPassword,
 		&i.Email,
-		&i.IsActive,
+		&i.IsVerified,
 		&i.IsSuperuser,
 		&i.Thumbnail,
 		&i.UpdatedAt,

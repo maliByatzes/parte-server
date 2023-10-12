@@ -14,6 +14,7 @@ type (
 		HTTP     HTTPConfig
 		Cache    CacheConfig
 		Token    TokenConfig
+		Mail     MailConfig
 	}
 
 	DatabaseConfig struct {
@@ -46,6 +47,12 @@ type (
 
 	TokenConfig struct {
 		TokenKey string
+	}
+
+	MailConfig struct {
+		Sender        string
+		Password      string
+		SenderAddress string
 	}
 )
 
